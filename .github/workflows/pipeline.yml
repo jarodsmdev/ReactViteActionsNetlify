@@ -10,42 +10,42 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout repo # Checkout the repository
         uses: actions/checkout@v4
 
-      - name: Use Node.js
+      - name: Use Node.js # Set up Node.js environment
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install dependencies
+      - name: Install dependencies # Install project dependencies
         run: npm install
 
-      - name: Build project
+      - name: Build project # Build the project
         run: npm run build
 
       - name: Upload dist as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vite-build
-          path: dist
-          if-no-files-found: error
-          retention-days: 7
-          compression-level: 6
-          overwrite: true
+          name: vite-build # Name of the artifact
+          path: dist # Path to the directory or file to be uploaded
+          if-no-files-found: error # Options: error, warn, ignore
+          retention-days: 7 # Number of days to retain the artifact
+          compression-level: 6 # Compression level (0-9)
+          overwrite: true # Overwrite existing artifact with the same name
 
   deploy:
-    needs: build
+    needs: build # Ensure deploy job runs after build job
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download build artifact
+      - name: Download build artifact # Download the build artifact
         uses: actions/download-artifact@v4
         with:
           name: vite-build
           path: dist
 
-      - name: Deploy to Netlify
+      - name: Deploy to Netlify # Deploy the built project to Netlify
         run: npx netlify deploy --prod --dir=dist --site=$NETLIFY_SITE_ID
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
